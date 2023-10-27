@@ -1,0 +1,88 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.local/share/zsh_history
+HISTSIZE=''
+HISTFILESIZE=''
+setopt autocd extendedglob notify
+unsetopt beep
+bindkey -v
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/brendan/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+stty -ixon
+
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+
+export HISTFILE="$XDG_DATA_HOME"/bash/history
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+export IPYTHONDIR="$XDG_CONFIG_HOME"/jupyter
+export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
+export PYLINTHOME="$XDG_CACHE_HOME"/pylint
+export MBSYNCRC="$XDG_CONFIG_HOME"/isync/mbsyncrc
+export NOTMUCH_CONFIG="$XDG_CONFIG_HOME"/notmuch/notmuchrc
+export NMBGIT="$XDG_DATA_HOME"/notmuch/nmbug
+export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export LESSHISTFILE=-
+export LS_COLORS=$LS_COLORS:'di=0;36:'
+export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
+export QUTEWAL_DYNAMIC_LOADING=True
+
+export EDITOR=nvim
+
+alias v="$EDITOR"
+alias SP="sudo pacman"
+alias SS="sudo systemctl"
+alias gs="git status"
+alias gp="git push"
+alias gc="git commit"
+alias ga="git add"
+alias lg="lazygit"
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+
+function t {
+    ses="$(tmux list-sessions | fzf)"
+    [ -z "$ses" ] || tmux attach -t "$(echo -n "$ses" | cut -f1 -d':')"
+}
+
+function p {
+    spectre -t x -u "Brendan Hansen" -qq $1
+}
+
+lfcd() {
+    # dir="$(vifm --choose-dir - "$@")"
+    tmpfile="$(mktemp)"
+    dir="$(lf -last-dir-path "$tmpfile" "$@" && cat "$tmpfile")"
+    [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+}
+
+# Wasmer
+export WASMER_DIR="/home/brendan/.wasmer"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+
+export PATH="$PATH:/home/brendan/tools/fermyon_spin"
+
+project() {
+    path="$(find ~/dev -maxdepth 2 -type d | fzf)"
+    [ -z "$path" ] && return 0
+    (
+        (zellij list-sessions | grep "$(basename "$path")") \
+        && zellij attach "$(basename "$path")"
+    ) \
+    || (cd "$path"; zellij -s $(basename "$path"))
+}
+
+eval "$(starship init zsh)"
+
+if [ -e /home/brendan/.nix-profile/etc/profile.d/nix.sh ]; then . /home/brendan/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer

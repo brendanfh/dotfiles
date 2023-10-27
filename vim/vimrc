@@ -1,0 +1,115 @@
+filetype plugin indent on
+syntax on
+
+set relativenumber number
+set smartcase
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set incsearch
+set nowrap
+set linebreak
+set noerrorbells
+set noswapfile
+set nobackup
+set undodir=~/.vim/undordir
+set undofile
+set incsearch
+set splitbelow splitright
+set encoding=UTF-8
+
+call plug#begin()
+
+Plug 'onyx-lang/onyx.vim'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
+Plug 'junegunn/fzf.vim'
+Plug 'puremourning/vimspector'
+" Plug 'sakibmoon/vim-colors-notepad-plus-plus'
+
+call plug#end()
+
+set gfn=Fantasque\ Sans\ Mono\ 16
+set go=m
+set mouse=niv
+
+set termguicolors
+set t_Co=256
+" color catppuccin_mocha
+" color notepad-plus-plus
+" color retrobox
+
+let mapleader=' '
+
+nmap <leader>wh <C-w>h
+nmap <leader>wj <C-w>j
+nmap <leader>wk <C-w>k
+nmap <leader>wl <C-w>l
+
+nmap <Tab> :tabn<CR>
+nmap <S-Tab> :tabp<CR>
+nmap <leader>tn :tabnew<CR>
+nmap <leader>td :tabclose<CR>
+
+nmap <leader>fw :lvimgrep '' **/*<left><left><left><left><left><left>
+nmap <leader>bb :ls<CR>:b<space>
+nmap <leader>ff :GFiles<CR>
+nmap <leader>fb :Lexplore<CR>
+nmap <leader>cc :Colors<CR>
+
+nmap <esc> :noh<CR>:lclose<CR>:cclose<CR>
+
+tmap <esc> <C-\><C-n>
+
+set laststatus=2
+set statusline=
+set statusline+=%#CursorColumn#
+set statusline+=\ %f\ 
+set statusline+=%#LineNr#
+set statusline+=%m\ 
+set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\[%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
+set statusline+=\ 
+
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 25
+let g:netrw_keepdir=0
+
+
+
+
+
+function! UpdateBackground()
+    silent let out = split(system('gsettings get org.gnome.desktop.interface color-scheme'))
+    if stridx(out[0], 'prefer-dark') >= 0
+        set background=dark
+        colorscheme sorbet
+    else
+        set background=light
+        colorscheme delek
+    endif
+endfunction
+call UpdateBackground()
+
+nmap <leader>cc :call UpdateBackground()<CR>
+
+
+nnoremap <Leader>dd :call vimspector#Launch()<CR>
+nnoremap <Leader>de :call vimspector#Reset()<CR>
+nnoremap <Leader>dc :call vimspector#Continue()<CR>
+
+nnoremap <Leader>dt :call vimspector#ToggleBreakpoint()<CR>
+nnoremap <Leader>dT :call vimspector#ClearBreakpoints()<CR>
+
+nmap <Leader>dk <Plug>VimspectorRestart
+nmap <Leader>dh <Plug>VimspectorStepOut
+nmap <Leader>dl <Plug>VimspectorStepInto
+nmap <Leader>dj <Plug>VimspectorStepOver
+

@@ -1,0 +1,115 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# Disable Ctrl-s and Ctrl-q
+stty -ixon
+
+# cd automatically
+shopt -s autocd
+
+# Infinite history
+HISTSIZE='' HISTFILESIZE=''
+
+# VI mode
+set -o vi
+
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+
+export HISTFILE="$XDG_DATA_HOME"/bash/history
+export CARGO_HOME="$XDG_DATA_HOME"/cargo
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export GNUPGHOME="$XDG_DATA_HOME"/gnupg
+export IPYTHONDIR="$XDG_CONFIG_HOME"/jupyter
+export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass
+export PYLINTHOME="$XDG_CACHE_HOME"/pylint
+export MBSYNCRC="$XDG_CONFIG_HOME"/isync/mbsyncrc
+export NOTMUCH_CONFIG="$XDG_CONFIG_HOME"/notmuch/notmuchrc
+export NMBGIT="$XDG_DATA_HOME"/notmuch/nmbug
+export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
+export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
+export LESSHISTFILE=-
+export LS_COLORS=$LS_COLORS:'di=0;36:'
+export FZF_DEFAULT_OPTS="--layout=reverse --height 40%"
+export QUTEWAL_DYNAMIC_LOADING=True
+
+export EDITOR=vim
+
+alias v="$EDITOR"
+alias SP="sudo pacman"
+alias SS="sudo systemctl"
+alias gs="git status"
+alias gp="git push"
+alias gc="git commit"
+alias ga="git add"
+alias lg="lazygit"
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+
+function t {
+    ses="$(tmux list-sessions | fzf)"
+    [ -z "$ses" ] || tmux attach -t "$(echo -n "$ses" | cut -f1 -d':')"
+}
+
+function p {
+    spectre -t x -u "Brendan Hansen" -qq $1
+}
+
+lfcd() {
+    # dir="$(vifm --choose-dir - "$@")"
+    tmpfile="$(mktemp)"
+    dir="$(lf -last-dir-path "$tmpfile" "$@" && cat "$tmpfile")"
+    [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+}
+
+bind -x '"\C-o":"lfcd ."'
+bind -x '"\C-j":"code-shell"'
+bind -x '"\C-h":"htop"'
+
+eval "$(starship init bash)"
+. "/home/brendan/.local/share/cargo/env"
+
+export PATH="$PATH:/home/brendan/.yarn/bin"
+export PATH="$PATH:/home/brendan/.local/bin"
+
+# Wasmer
+export WASMER_DIR="/home/brendan/.wasmer"
+[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+
+export PATH="$PATH:/home/brendan/tools/fermyon_spin"
+
+# project() {
+#     path="$(find ~/dev -maxdepth 2 -type d | fzf)"
+#     [ -z "$path" ] && return 0
+#     (
+#         (zellij list-sessions | grep "$(basename "$path")") \
+#         && zellij attach "$(basename "$path")"
+#     ) \
+#     || (cd "$path"; zellij -s $(basename "$path"))
+# }
+
+project() {
+    path="$(find ~/dev -maxdepth 2 -type d | fzf)"
+    [ -z "$path" ] && return 0
+    (
+        (tmux list-sessions | grep -F "[$(basename "$path")]") \
+        && tmux attach -t "[$(basename "$path")]"
+    ) \
+    || (cd "$path"; tmux new-session -t "[$(basename "$path")]")
+}
+
+bind -x '"\C-p":"project"'
+export PATH=$PATH:/home/brendan/.spicetify
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH=$BUN_INSTALL/bin:$PATH
+
+export MOZ_ENABLE_WAYLAND=1

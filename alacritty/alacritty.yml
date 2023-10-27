@@ -1,0 +1,37 @@
+import:
+  - ~/.config/alacritty/catppuccin/catppuccin-latte.yml
+env:
+  TERM: xterm-256color
+
+    # font:
+  # normal:
+  #   family: ComicMono NF
+  #   style: Regular
+  # bold:
+  #   family: ComicMono NF
+  #   style: Bold
+  # italic:
+  #   family: ComicMono NF
+  #   style: Italic
+  # bold_italic:
+  #   family: ComicMono NF
+  #   style: Bold Italic
+  # size: 16
+
+font:
+  normal:
+    family: FiraCode Nerd Font Mono
+    style: Regular
+  bold:
+    family: FiraCode Nerd Font Mono
+    style: Bold
+  italic:
+    family: FiraCode Nerd Font Mono
+    style: Italic
+  bold_italic:
+    family: FiraCode Nerd Font Mono
+    style: Bold Italic
+  size: 16
+
+window:
+  decorations: "None"
